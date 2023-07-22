@@ -28,6 +28,7 @@ export class Logger {
   namespace(...namespaces: string[]) {
     return new Logger({
       ...this.options,
+
       prefix: [
         this.options.prefix,
         ...namespaces.map(ns => `[${ns}]`),

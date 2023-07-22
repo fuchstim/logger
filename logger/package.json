@@ -1,12 +1,14 @@
 {
   "name": "@ftim/logger",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "scripts": {
     "clean": "rm -rf ./dist",
     "build": "tsc -p ./tsconfig.json",
     "rebuild": "npm run clean && npm run build",
-    "watch": "tsc -b -w"
+    "watch": "tsc -b -w",
+    "prepublish": "npm run rebuild"
   },
   "keywords": [],
   "author": "Tim Fuchs <mail@ftim.dev> (https://github.com/fuchstim)",
