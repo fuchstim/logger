@@ -72,4 +72,8 @@ export class Logger {
   }
 }
 
-export default new Logger();
+const defaultInstance = new Logger();
+export default defaultInstance;
+
+module.exports = defaultInstance;
+module.exports.Logger = Logger;
