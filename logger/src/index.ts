@@ -15,11 +15,11 @@ export class Logger {
 
   constructor(options?: Partial<TLoggerOptions>) {
     this.options = {
-      ...options,
-
       color: true,
       prefix: '',
       transport: console,
+
+      ...options,
     };
   }
 
