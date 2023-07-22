@@ -1,0 +1,21 @@
+{
+  "name": "@ftim/logger",
+  "version": "1.0.0",
+  "main": "dist/src/index.js",
+  "scripts": {
+    "clean": "rm -rf ./dist",
+    "build": "tsc -p ./tsconfig.json",
+    "rebuild": "npm run clean && npm run build",
+    "watch": "tsc -b -w"
+  },
+  "keywords": [],
+  "author": "Tim Fuchs <mail@ftim.dev> (https://github.com/fuchstim)",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.4.4",
+    "@typescript-eslint/eslint-plugin": "^6.1.0",
+    "@typescript-eslint/parser": "^6.1.0",
+    "eslint": "^8.45.0",
+    "typescript": "^5.1.6"
+  }
+}
