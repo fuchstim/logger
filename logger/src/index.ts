@@ -1,74 +1,57 @@
-import util from 'util';
+import { ConsoleTransport } from './transports/console';
+import { ILogTransport, TLogFragment, TLogLevel } from './types';
 
-type TLoggerOptions = {
-  prefix: string;
-  color: boolean;
-  transport: TLogTransport;
+export type TLoggerOptions = {
+  prefix?: string;
+  transports?: ILogTransport[];
 };
-type TLogFragment = string | number | symbol | boolean | null | undefined | Error | object;
-type TLogLevel = 'debug' | 'info' | 'warn' | 'error';
 
-type TLogTransport = Record<TLogLevel, (message: string) => void>;
+export { TLogLevel, ILogTransport } from './types';
+export { ConsoleTransport } from './transports/console';
 
-export class Logger {
-  private options: TLoggerOptions;
+export class Logger implements ILogTransport {
+  private prefix?: string;
+  private transports: ILogTransport[];
 
   constructor(options?: Partial<TLoggerOptions>) {
-    this.options = {
-      color: true,
-      prefix: '',
-      transport: console,
+    this.prefix = options?.prefix;
+    this.transports = options?.transports ?? [ new ConsoleTransport({ color: true, json: false, }), ];
+  }
 
-      ...options,
-    };
+  setPrefix(prefix: string) {
+    this.prefix = prefix;
+  }
+
+  setTransports(transports: ILogTransport[]) {
+    this.transports = transports;
   }
 
   ns(...namespaces: string[]) { return this.namespace(...namespaces); }
 
   namespace(...namespaces: string[]) {
-    return new Logger({
-      ...this.options,
+    if (!namespaces.length) {
+      return this;
+    }
 
-      prefix: [
-        this.options.prefix,
-        ...namespaces.map(ns => `[${ns}]`),
-      ].join('').trim(),
-    });
+    return namespaces.reduce(
+      (logger, prefix) => new Logger({ prefix, transports: [ logger, ], }),
+      this as Logger
+    );
   }
 
-  log(...args: TLogFragment[]): void;
-  log(level: TLogLevel, ...args: TLogFragment[]) {
-    this[level ?? 'info'](...args);
-  }
+  error(...args: TLogFragment[]) { this.log('error', args); }
+  warn(...args: TLogFragment[]) { this.log('warn', args); }
+  info(...args: TLogFragment[]) { this.log('info', args); }
+  debug(...args: TLogFragment[]) { this.log('debug', args); }
 
-  error(...args: TLogFragment[]) { this.writeLog('error', args); }
-  warn(...args: TLogFragment[]) { this.writeLog('warn', args); }
-  info(...args: TLogFragment[]) { this.writeLog('info', args); }
-  debug(...args: TLogFragment[]) { this.writeLog('debug', args); }
+  async log(level: TLogLevel, fragments: TLogFragment[]): Promise<void>;
+  async log(level: TLogLevel, fragments: TLogFragment[], prefixes: string[] = []): Promise<void> {
+    if (this.prefix) { prefixes.unshift(this.prefix); }
 
-  protected writeLog(level: TLogLevel, fragments: TLogFragment[]) {
-    const formattedFragments = [ this.options.prefix, ...fragments, ]
-      .map(fragment => {
-        if ([ 'string', 'boolean', 'number', ].includes(typeof fragment)) {
-          return String(fragment);
-        }
-
-        return util.inspect(
-          fragment,
-          {
-            showHidden: false,
-            depth: 5,
-            colors: this.options.color,
-          }
-        );
-      })
-      .filter(fragment => Boolean(fragment.length));
-
-    const message = [ `[${level}]`, ...formattedFragments, ].join(' ');
-
-    this.options.transport[level].apply(
-      this.options.transport,
-      [ message, ]
+    await Promise.all(
+      this.transports.map(
+        transport => transport.log(level, fragments, prefixes)
+      )
     );
   }
 }
