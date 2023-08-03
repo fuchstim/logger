@@ -67,7 +67,7 @@ export class ConsoleTransport implements ILogTransport {
     ]
       .join(' ');
 
-    console[level](this.options.color ? this.applyColor(level, message) : message);
+    console[level](message);
   }
 
   private applyColor(level: TLogLevel, message: string): string {
