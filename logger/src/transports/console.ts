@@ -48,7 +48,7 @@ export class ConsoleTransport implements ILogTransport {
           {
             showHidden: false,
             depth: 5,
-            colors: false,
+            colors: this.options.color,
             ...this.options.inspectOptions,
           }
         );
@@ -59,14 +59,20 @@ export class ConsoleTransport implements ILogTransport {
       .map(prefix => `[${prefix}]`)
       .join('');
 
-    const message = [ `(${level})`, formattedPrefixes, ...formattedFragments, ]
-      .filter(fragment => Boolean(fragment.length))
+    const messagePrefix = `(${level})${formattedPrefixes}`;
+
+    const message = [
+      this.applyColor(level, messagePrefix),
+      ...formattedFragments,
+    ]
       .join(' ');
 
     console[level](this.options.color ? this.applyColor(level, message) : message);
   }
 
   private applyColor(level: TLogLevel, message: string): string {
+    if (!this.options.color) { return message; }
+
     const color = {
       debug: chalk.gray,
       info: chalk.green,
