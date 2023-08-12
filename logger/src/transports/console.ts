@@ -17,15 +17,15 @@ export class ConsoleTransport implements ILogTransport {
     this.options = options;
   }
 
-  log(level: TLogLevel, fragments: TLogFragment[], prefixes: string[]): void | Promise<void> {
+  log(level: TLogLevel, prefixes: string[], fragments: TLogFragment[]): void | Promise<void> {
     if (this.options.json) {
-      return this.logJson(level, fragments, prefixes);
+      return this.logJson(level, prefixes, fragments);
     }
 
-    return this.logPlain(level, fragments, prefixes);
+    return this.logPlain(level, prefixes, fragments);
   }
 
-  private logJson(level: TLogLevel, fragments: TLogFragment[], prefixes: string[]): void {
+  private logJson(level: TLogLevel, prefixes: string[], fragments: TLogFragment[]): void {
     const message = JSON.stringify({
       timestamp: new Date().toISOString(),
       level,
@@ -36,7 +36,7 @@ export class ConsoleTransport implements ILogTransport {
     console[level](message);
   }
 
-  private logPlain(level: TLogLevel, fragments: TLogFragment[], prefixes: string[]): void {
+  private logPlain(level: TLogLevel, prefixes: string[], fragments: TLogFragment[]): void {
     const formattedFragments = fragments
       .map(fragment => {
         if ([ 'string', 'boolean', 'number', ].includes(typeof fragment)) {

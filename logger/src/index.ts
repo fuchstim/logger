@@ -39,18 +39,17 @@ export class Logger implements ILogTransport {
     );
   }
 
-  error(...args: TLogFragment[]) { this.log('error', args); }
-  warn(...args: TLogFragment[]) { this.log('warn', args); }
-  info(...args: TLogFragment[]) { this.log('info', args); }
-  debug(...args: TLogFragment[]) { this.log('debug', args); }
+  error(...fragments: TLogFragment[]) { this.log('error', [], fragments); }
+  warn(...fragments: TLogFragment[]) { this.log('warn', [], fragments); }
+  info(...fragments: TLogFragment[]) { this.log('info', [], fragments); }
+  debug(...fragments: TLogFragment[]) { this.log('debug', [], fragments); }
 
-  async log(level: TLogLevel, fragments: TLogFragment[]): Promise<void>;
-  async log(level: TLogLevel, fragments: TLogFragment[], prefixes: string[] = []): Promise<void> {
+  async log(level: TLogLevel, prefixes: string[], fragments: TLogFragment[]): Promise<void> {
     if (this.prefix) { prefixes.unshift(this.prefix); }
 
     await Promise.all(
       this.transports.map(
-        transport => transport.log(level, fragments, prefixes)
+        transport => transport.log(level, prefixes, fragments)
       )
     );
   }

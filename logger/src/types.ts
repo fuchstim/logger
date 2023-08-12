@@ -2,5 +2,5 @@ export type TLogFragment = string | number | symbol | boolean | null | undefined
 export type TLogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 export interface ILogTransport {
-  log(level: TLogLevel, fragments: TLogFragment[], prefixes: string[]): void | Promise<void>
+  log(level: TLogLevel, prefixes: string[], fragments: TLogFragment[]): void | Promise<void>
 }
