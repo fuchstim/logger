@@ -29,7 +29,7 @@ export class Logger implements ILogTransport {
 
   constructor(options?: TLoggerOptions) {
     this.prefix = options?.prefix;
-    this.transports = options?.transports ?? [ new ConsoleTransport({ color: true, json: false, }), ];
+    this.transports = options?.transports ?? [new ConsoleTransport({ color: true, json: false, }),];
   }
 
   /** Set prefix after initialization */
@@ -37,7 +37,7 @@ export class Logger implements ILogTransport {
     this.prefix = prefix;
   }
 
-  /** Set prefix after initialization */
+  /** Set transports after initialization */
   setTransports(transports: ILogTransport[]) {
     this.transports = transports;
   }
@@ -52,14 +52,14 @@ export class Logger implements ILogTransport {
     }
 
     return namespaces.reduce(
-      (logger, prefix) => new Logger({ prefix, transports: [ logger, ], }),
+      (logger, prefix) => new Logger({ prefix, transports: [logger,], }),
       this as Logger
     );
   }
 
   /** Log a message with level `error` */
   error(...fragments: TLogFragment[]) { this.log('error', [], fragments); }
-  
+
   /** Log a message with level `warn` */
   warn(...fragments: TLogFragment[]) { this.log('warn', [], fragments); }
 
