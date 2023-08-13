@@ -42,7 +42,7 @@ export class Logger implements ILogTransport {
     this.transports = transports;
   }
 
-  /** Alias of `namespace` */
+  /** Alias of {@link Logger.namespace} */
   ns(...namespaces: string[]) { return this.namespace(...namespaces); }
 
   /** Create or or more child logger instances */
