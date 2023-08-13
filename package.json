@@ -1,11 +1,11 @@
 {
   "name": "@ftim/logger",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "scripts": {
     "clean": "rm -rf ./dist",
-    "build": "tsc -p ./tsconfig.json",
+    "build": "tsc -p ./tsconfig.json; typedoc",
     "rebuild": "npm run clean && npm run build",
     "watch": "tsc -b -w",
     "prepublishOnly": "npm install && npm run rebuild"
@@ -18,6 +18,9 @@
     "@typescript-eslint/eslint-plugin": "^6.1.0",
     "@typescript-eslint/parser": "^6.1.0",
     "eslint": "^8.45.0",
+    "eslint-plugin-tsdoc": "^0.2.17",
+    "typedoc-plugin-missing-exports": "^2.0.1",
+    "typedoc-plugin-rename-defaults": "^0.6.5",
     "typescript": "^5.1.6"
   },
   "dependencies": {

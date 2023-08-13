@@ -5,19 +5,46 @@ import chalk from 'chalk';
 import { ILogTransport, TLogFragment, TLogLevel } from '../types';
 
 export type TConsoleTransportOptions = {
+  /** Minimum log level to be printed */
+  logLevel?: TLogLevel;
+  /** Whether to apply color to log messages. Ignored if `json: true` */
   color?: boolean;
+  /** Whether to log messages as JSON */
   json?: boolean;
+  /** Options to pass to `util.inspect` when serializing objects */
   inspectOptions?: util.InspectOptions;
 };
 
+const SORTED_LOG_LEVELS: TLogLevel[] = [
+  'debug',
+  'info',
+  'warn',
+  'error'
+];
+
 export class ConsoleTransport implements ILogTransport {
-  private options: TConsoleTransportOptions = {};
+  private options: Required<TConsoleTransportOptions>;
 
   constructor(options: TConsoleTransportOptions = {}) {
-    this.options = options;
+    this.options = {
+      logLevel: 'info',
+      color: true,
+      json: false,
+      inspectOptions: {
+        showHidden: false,
+        depth: 5,
+        colors: options.color ?? true,
+        ...options.inspectOptions,
+      },
+      ...options
+    };
   }
 
   log(level: TLogLevel, prefixes: string[], fragments: TLogFragment[]): void | Promise<void> {
+    if (SORTED_LOG_LEVELS.indexOf(level) < SORTED_LOG_LEVELS.indexOf(this.options.logLevel)) {
+      return;
+    }
+
     if (this.options.json) {
       return this.logJson(level, prefixes, fragments);
     }
@@ -39,18 +66,13 @@ export class ConsoleTransport implements ILogTransport {
   private logPlain(level: TLogLevel, prefixes: string[], fragments: TLogFragment[]): void {
     const formattedFragments = fragments
       .map(fragment => {
-        if ([ 'string', 'boolean', 'number', ].includes(typeof fragment)) {
+        if (['string', 'boolean', 'number',].includes(typeof fragment)) {
           return String(fragment);
         }
 
         return util.inspect(
           fragment,
-          {
-            showHidden: false,
-            depth: 5,
-            colors: this.options.color,
-            ...this.options.inspectOptions,
-          }
+          this.options.inspectOptions,
         );
       })
       .filter(fragment => Boolean(fragment.length));
