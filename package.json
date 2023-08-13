@@ -1,6 +1,6 @@
 {
   "name": "@ftim/logger",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "scripts": {
@@ -12,6 +12,11 @@
   },
   "keywords": [],
   "author": "Tim Fuchs <mail@ftim.dev> (https://github.com/fuchstim)",
+  "homepage": "https://github.com/fuchstim/logger",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fuchstim/logger.git"
+  },
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.4.4",
